@@ -3,7 +3,7 @@ services:
   # ── Backend ─────────────────────────────────────────────────
   # Pulls the pre-built image from Docker Hub — no source code needed.
   backend:
-    image: cloudwithnitesh/nexops-backend:v1.0
+    image: cloudwithnitesh/nexops-backend:1.0.0
     container_name: nexops-backend
     restart: unless-stopped
     ports:
@@ -22,7 +22,7 @@ services:
   # ── Frontend ─────────────────────────────────────────────────
   # Port 3000 avoids clash with Jenkins which uses 8080 by default.
   frontend:
-    image: cloudwithnitesh/nexops-frontend:v1.1
+    image: cloudwithnitesh/nexops-frontend:1.0.0 
     container_name: nexops-frontend
     restart: unless-stopped
     ports:
