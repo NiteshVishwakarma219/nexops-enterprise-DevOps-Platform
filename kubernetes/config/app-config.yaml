@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nexops-app-config
+  namespace: nexops
+data:
+  APP_NAME: "NexOps"
+  NODE_ENV: "production"
+  PORT: "8000"
+  JWT_EXPIRES_IN: "7d"
+  RESET_TOKEN_EXPIRE_MINUTES: "30"
+  UPLOAD_DIR: "/uploads"
+  MAX_UPLOAD_SIZE_MB: "10"

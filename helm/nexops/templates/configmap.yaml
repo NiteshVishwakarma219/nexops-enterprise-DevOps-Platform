@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nexops-app-config
+  namespace: {{ .Release.Namespace }}
+data:
+  APP_NAME: {{ .Values.app.name | quote }}
+  NODE_ENV: {{ .Values.app.nodeEnv | quote }}
+  PORT: {{ .Values.backend.port | quote }}
+  JWT_EXPIRES_IN: {{ .Values.app.jwtExpiresIn | quote }}
+  RESET_TOKEN_EXPIRE_MINUTES: {{ .Values.app.resetTokenExpireMinutes | quote }}
+  UPLOAD_DIR: {{ .Values.app.uploadDir | quote }}
+  MAX_UPLOAD_SIZE_MB: {{ .Values.app.maxUploadSizeMb | quote }}

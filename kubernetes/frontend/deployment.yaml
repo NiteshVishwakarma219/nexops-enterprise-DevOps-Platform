@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nexops-frontend
+  namespace: nexops
+  labels:
+    app: nexops-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nexops-frontend
+  template:
+    metadata:
+      labels:
+        app: nexops-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: cloudwithnitesh/nexops-frontend:v1.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 3

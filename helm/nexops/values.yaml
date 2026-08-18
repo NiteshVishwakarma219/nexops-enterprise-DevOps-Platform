@@ -1,0 +1,120 @@
+# NexOps Helm values
+# Backend and frontend tags are INDEPENDENT — they have separate release cycles.
+# Update them separately using: bash scripts/update-image-tag.sh <backend|frontend> <tag>
+
+# ── Backend ──────────────────────────────────────────────────
+backend:
+  image:
+    repository: cloudwithnitesh/nexops-backend
+    tag: "v1.0"
+    pullPolicy: Always
+
+  replicaCount: 2
+  port: 8000
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  livenessProbe:
+    httpGet:
+      path: /api/health
+    initialDelaySeconds: 20
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  readinessProbe:
+    httpGet:
+      path: /api/health
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 6
+    targetCPUUtilizationPercentage: 70
+
+  # In production, prefer a separately managed Kubernetes Secret.
+  secret:
+    create: false
+    name: nexops-backend-secret
+    DATABASE_URL: ""
+    DIRECT_URL: ""
+    JWT_SECRET: ""
+    ADMIN_KEY: ""
+    ALLOWED_ORIGIN: ""
+    FRONTEND_URL: ""
+    EMAIL_USER: ""
+    EMAIL_PASS: ""
+    NOTIFY_EMAIL: ""
+    RESEND_API_KEY: ""
+
+# ── Frontend ─────────────────────────────────────────────────
+frontend:
+  image:
+    repository: cloudwithnitesh/nexops-frontend
+    tag: "v1.1"
+    pullPolicy: Always
+
+  replicaCount: 2
+  port: 80
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+
+  livenessProbe:
+    httpGet:
+      path: /
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  readinessProbe:
+    httpGet:
+      path: /
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 4
+    targetCPUUtilizationPercentage: 70
+
+# ── Ingress ──────────────────────────────────────────────────
+ingress:
+  enabled: true
+  className: nginx
+  host: nexops.local
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+
+# ── Application configuration ────────────────────────────────
+app:
+  name: "NexOps"
+  nodeEnv: "production"
+  jwtExpiresIn: "7d"
+  resetTokenExpireMinutes: "30"
+  uploadDir: "/uploads"
+  maxUploadSizeMb: "10"
+
+storage:
+  enabled: true
+  accessMode: ReadWriteOnce
+  size: 1Gi

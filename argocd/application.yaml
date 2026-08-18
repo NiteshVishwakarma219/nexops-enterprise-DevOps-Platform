@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nexops
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/NiteshVishwakarma219/nexops-enterprise-devops-platform.git
+    targetRevision: main
+    path: helm/nexops
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: nexops
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

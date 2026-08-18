@@ -1,0 +1,68 @@
+pipeline {
+    agent any
+
+    options {
+        timestamps()
+        disableConcurrentBuilds()
+    }
+
+    environment {
+        BACKEND_IMAGE = 'cloudwithnitesh/nexops-backend:v1.0'
+        FRONTEND_IMAGE = 'cloudwithnitesh/nexops-frontend:v1.1'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Helm lint and render') {
+            steps {
+                sh '''
+                    helm lint helm/nexops
+                    helm template nexops helm/nexops --namespace nexops
+                '''
+            }
+        }
+
+        stage('Kubernetes validation') {
+            steps {
+                sh '''
+                    command -v kubeconform >/dev/null 2>&1 || {
+                      curl -sL https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz                         | tar xz -C /tmp
+                    }
+                    /tmp/kubeconform -strict -ignore-missing-schemas kubernetes
+                '''
+            }
+        }
+
+        stage('Trivy image scan') {
+            steps {
+                sh '''
+                    trivy image --exit-code 1 --ignore-unfixed --severity HIGH,CRITICAL "$BACKEND_IMAGE"
+                    trivy image --exit-code 1 --ignore-unfixed --severity HIGH,CRITICAL "$FRONTEND_IMAGE"
+                '''
+            }
+        }
+
+        stage('Verify images') {
+            steps {
+                sh '''
+                    docker manifest inspect "$BACKEND_IMAGE"
+                    docker manifest inspect "$FRONTEND_IMAGE"
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Validation passed. Argo CD is responsible for deployment.'
+        }
+        failure {
+            echo 'Validation failed. No GitOps deployment should proceed.'
+        }
+    }
+}

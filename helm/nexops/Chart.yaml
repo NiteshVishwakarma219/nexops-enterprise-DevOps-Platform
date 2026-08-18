@@ -1,0 +1,15 @@
+apiVersion: v2
+name: nexops
+description: >
+  Helm chart for NexOps. Deploys pre-built backend and frontend images
+  from Docker Hub. Database is an external managed PostgreSQL service — no in-cluster DB pod.
+type: application
+version: 0.1.0
+appVersion: "1.1.0"
+keywords:
+  - devops
+  - kubernetes
+  - gitops
+home: https://github.com/NiteshVishwakarma219/nexops-enterprise-devops-platform
+maintainers:
+  - name: NexOps Team

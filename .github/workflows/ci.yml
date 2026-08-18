@@ -1,0 +1,60 @@
+name: DevOps Platform CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Helm lint
+        uses: azure/setup-helm@v4
+      - run: helm lint helm/nexops
+      - name: Render Helm chart
+        run: |
+          helm template nexops helm/nexops --namespace nexops             --set backend.secret.DATABASE_URL=ci-placeholder             --set backend.secret.DIRECT_URL=ci-placeholder             --set backend.secret.JWT_SECRET=ci-placeholder             --set backend.secret.ADMIN_KEY=ci-placeholder             --set backend.secret.ALLOWED_ORIGIN=http://ci             --set backend.secret.FRONTEND_URL=http://ci
+
+      - name: Validate Kubernetes YAML
+        uses: docker://ghcr.io/yannh/kubeconform:latest
+        with:
+          args: -strict -ignore-missing-schemas kubernetes
+
+  image-security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read release image tags
+        id: images
+        shell: bash
+        run: |
+          B_TAG=$(awk '/repository: cloudwithnitesh\/nexops-backend/{f=1} f && /tag:/{print $2; exit}' helm/nexops/values.yaml | tr -d '"')
+          F_TAG=$(awk '/repository: cloudwithnitesh\/nexops-frontend/{f=1} f && /tag:/{print $2; exit}' helm/nexops/values.yaml | tr -d '"')
+          echo "backend=cloudwithnitesh/nexops-backend:${B_TAG}" >> "$GITHUB_OUTPUT"
+          echo "frontend=cloudwithnitesh/nexops-frontend:${F_TAG}" >> "$GITHUB_OUTPUT"
+
+      - name: Trivy scan backend image
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          image-ref: ${{ steps.images.outputs.backend }}
+          format: table
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: CRITICAL,HIGH
+
+      - name: Trivy scan frontend image
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          image-ref: ${{ steps.images.outputs.frontend }}
+          format: table
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: CRITICAL,HIGH
