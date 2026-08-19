@@ -101,7 +101,7 @@ frontend:
 ingress:
   enabled: true
   className: nginx
-  host: nexops.local
+  host: nitesh.shop
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
 
