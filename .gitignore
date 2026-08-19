@@ -17,3 +17,10 @@ Thumbs.db
 .vscode/
 .idea/
 *.tmp
+
+# Local development TLS certificates
+tls/
+*.crt
+
+# Generated Kubernetes manifests
+rendered.yaml
