@@ -6,7 +6,6 @@
 - Helm
 - Kubernetes cluster (KIND/Minikube/EKS)
 - Git
-- Trivy
 - Argo CD for GitOps
 - Docker Hub images:
   - cloudwithnitesh/nexops-backend:v1.0

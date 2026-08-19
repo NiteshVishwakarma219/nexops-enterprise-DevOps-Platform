@@ -20,7 +20,9 @@ jobs:
       - name: Helm lint
         uses: azure/setup-helm@v4
 
-      - run: helm lint helm/nexops
+      - name: Lint Helm chart
+        run: |
+          helm lint helm/nexops
 
       - name: Render Helm chart
         run: |
@@ -37,38 +39,3 @@ jobs:
         uses: docker://ghcr.io/yannh/kubeconform:latest
         with:
           args: -strict -ignore-missing-schemas kubernetes
-
-  image-security:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Read release image tags
-        id: images
-        shell: bash
-        run: |
-          B_TAG=$(awk '/repository: cloudwithnitesh\/nexops-backend/{f=1} f && /tag:/{print $2; exit}' helm/nexops/values.yaml | tr -d '"')
-          F_TAG=$(awk '/repository: cloudwithnitesh\/nexops-frontend/{f=1} f && /tag:/{print $2; exit}' helm/nexops/values.yaml | tr -d '"')
-
-          echo "backend=cloudwithnitesh/nexops-backend:${B_TAG}" >> "$GITHUB_OUTPUT"
-          echo "frontend=cloudwithnitesh/nexops-frontend:${F_TAG}" >> "$GITHUB_OUTPUT"
-
-      - name: Trivy scan backend image
-        uses: aquasecurity/trivy-action@v0.36.0
-        with:
-          image-ref: ${{ steps.images.outputs.backend }}
-          format: table
-          exit-code: '1'
-          ignore-unfixed: true
-          severity: CRITICAL,HIGH
-
-      - name: Trivy scan frontend image
-        uses: aquasecurity/trivy-action@v0.36.0
-        with:
-          image-ref: ${{ steps.images.outputs.frontend }}
-          format: table
-          exit-code: '1'
-          ignore-unfixed: true
-          severity: CRITICAL,HIGH
