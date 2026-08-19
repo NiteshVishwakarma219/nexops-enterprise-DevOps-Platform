@@ -6,8 +6,15 @@ metadata:
   namespace: {{ .Release.Namespace }}
   annotations:
     {{- toYaml .Values.ingress.annotations | nindent 4 }}
+
 spec:
   ingressClassName: {{ .Values.ingress.className }}
+
+  tls:
+    - hosts:
+        - {{ .Values.ingress.host }}
+      secretName: nitesh-shop-tls
+
   rules:
     - host: {{ .Values.ingress.host }}
       http:
@@ -19,6 +26,7 @@ spec:
                 name: nexops-backend
                 port:
                   number: {{ .Values.backend.port }}
+
           - path: /
             pathType: Prefix
             backend:
