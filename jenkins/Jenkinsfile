@@ -7,8 +7,8 @@ pipeline {
     }
 
     environment {
-        BACKEND_IMAGE = 'cloudwithnitesh/nexops-backend:v1.0'
-        FRONTEND_IMAGE = 'cloudwithnitesh/nexops-frontend:v1.1'
+        BACKEND_IMAGE = 'cloudwithnitesh/nexops-backend:1.0.0'
+        FRONTEND_IMAGE = 'cloudwithnitesh/nexops-frontend:1.0.0'
     }
 
     stages {

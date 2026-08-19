@@ -6,7 +6,7 @@
 backend:
   image:
     repository: cloudwithnitesh/nexops-backend
-    tag: "v1.0"
+    tag: "1.0.0"
     pullPolicy: Always
 
   replicaCount: 2
@@ -61,7 +61,7 @@ backend:
 frontend:
   image:
     repository: cloudwithnitesh/nexops-frontend
-    tag: "v1.1"
+    tag: "1.0.0"
     pullPolicy: Always
 
   replicaCount: 2

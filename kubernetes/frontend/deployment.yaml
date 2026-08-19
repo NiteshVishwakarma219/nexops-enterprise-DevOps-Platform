@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: cloudwithnitesh/nexops-frontend:v1.1
+          image: cloudwithnitesh/nexops-frontend:1.0.0  
           imagePullPolicy: Always
           ports:
             - containerPort: 80
