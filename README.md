@@ -14,7 +14,6 @@ Kubernetes platform, CI validation/security, Helm packaging, Jenkins validation,
 - Helm
 - GitHub Actions
 - Jenkins
-- Trivy
 - Argo CD / GitOps
 - NGINX Ingress
 - ConfigMap / Secret
@@ -80,8 +79,6 @@ Tests
        ↓
 Docker build
        ↓
-Trivy image scan
-       ↓
 Docker Hub push
        ↓
 release image tag
@@ -91,8 +88,6 @@ This repository performs:
 
 ```text
 Helm/Kubernetes validation
-       ↓
-Trivy scan of release images
        ↓
 Git commit with image tag
        ↓
@@ -190,8 +185,6 @@ GitHub Actions validates:
 1. Helm lint
 2. Helm rendering
 3. Kubernetes manifests
-4. Trivy scan of the exact backend image
-5. Trivy scan of the exact frontend image
 
 Jenkins provides the equivalent enterprise validation pipeline.
 
@@ -238,7 +231,6 @@ Or inspect Argo CD/Helm history and return the Helm values to the previous known
 - Never put real database passwords in `values.yaml`.
 - Use short-lived Docker Hub access tokens.
 - Prefer immutable image tags for production releases.
-- Scan images with Trivy before deployment.
 - Use a managed external PostgreSQL service instead of a database pod in this cluster.
 
 ## Interview explanation

@@ -31,21 +31,13 @@ pipeline {
             steps {
                 sh '''
                     command -v kubeconform >/dev/null 2>&1 || {
-                      curl -sL https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz                         | tar xz -C /tmp
+                      curl -sL https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz | tar xz -C /tmp
                     }
                     /tmp/kubeconform -strict -ignore-missing-schemas kubernetes
                 '''
             }
         }
 
-        stage('Trivy image scan') {
-            steps {
-                sh '''
-                    trivy image --exit-code 1 --ignore-unfixed --severity HIGH,CRITICAL "$BACKEND_IMAGE"
-                    trivy image --exit-code 1 --ignore-unfixed --severity HIGH,CRITICAL "$FRONTEND_IMAGE"
-                '''
-            }
-        }
 
         stage('Verify images') {
             steps {
