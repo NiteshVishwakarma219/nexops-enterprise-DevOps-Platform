@@ -9,14 +9,12 @@ repository.
 ### Application repository
 - test frontend/backend
 - docker build
-- Trivy filesystem/image scan
 - docker push
 - publish release tag
 
 ### DevOps repository
 - Helm lint/template validation
 - Kubernetes manifest validation
-- Trivy scan of release images
 - GitOps configuration
 - Argo CD deployment
 - rollback through Git

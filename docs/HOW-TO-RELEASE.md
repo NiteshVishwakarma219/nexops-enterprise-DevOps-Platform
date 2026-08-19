@@ -11,7 +11,6 @@ docker push cloudwithnitesh/nexops-backend:v1.2
 docker push cloudwithnitesh/nexops-frontend:v1.2
 ```
 
-Run tests and Trivy image scans before pushing.
 
 ## 2. Update this repository
 
@@ -30,7 +29,6 @@ GitHub Actions:
 - Helm lint
 - Helm template
 - Kubernetes schema validation
-- Trivy HIGH/CRITICAL image scan
 
 Jenkins can perform the same validation in a self-hosted CI environment.
 
